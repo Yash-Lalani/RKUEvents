@@ -1,37 +1,78 @@
 import React, { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 
-const EventRegisteredUsers = () => {
+const EventRegisteredDepartmentUsers = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [registrations, setRegistrations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
 
-  // ✅ Fetch all events
-  useEffect(() => {
-    fetch("http://localhost:5000/api/super-admin/events/all")
-      .then((res) => res.json())
-      .then((data) => setEvents(data))
-      .catch((err) => console.error(err));
-  }, []);
+  // read logged-in user from localStorage
+  const user = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch {
+      return null;
+    }
+  })();
 
-  // ✅ Fetch registrations for selected event
-  const loadRegistrations = (eventId) => {
-    setSelectedEvent(eventId);
-    fetch(`http://localhost:5000/api/super-admin/events/${eventId}/registrations`)
-      .then((res) => res.json())
-      .then((data) => setRegistrations(data))
-      .catch((err) => console.error(err));
+  // Fetch events — only events for the department if user is a department-admin
+ useEffect(() => {
+  setLoading(true);
+  setErr("");
+
+  const fetchEvents = async () => {
+    try {
+      let url = "http://localhost:5000/api/events";
+
+      if (user?.role === "department-admin") {
+        const dept = user?.department || "";
+        url += `?department=${encodeURIComponent(dept)}`;
+      }
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to fetch events (${res.status})`);
+
+      const data = await res.json();
+      setEvents(data);
+    } catch (error) {
+      console.error(error);
+      setErr("Could not load events. Try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ✅ Download CSV
+  fetchEvents();
+}, []);   // <-- FIXED
+
+
+  // Fetch registrations for selected event
+  const loadRegistrations = (eventId) => {
+    setSelectedEvent(eventId);
+    setRegistrations([]);
+    fetch(`http://localhost:5000/api/super-admin/events/${eventId}/registrations`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch registrations");
+        return res.json();
+      })
+      .then((data) => setRegistrations(data))
+      .catch((err) => {
+        console.error(err);
+        setErr("Could not load registrations.");
+      });
+  };
+
+  // Download CSV
   const downloadCSV = () => {
     if (registrations.length === 0) return;
 
-    const headers = ["Name", "Email", ...Object.keys(registrations[0].responses)];
+    const headers = ["Name", "Email", ...Object.keys(registrations[0].responses || {})];
     const rows = registrations.map((reg) => [
       reg.userId?.name || "N/A",
       reg.userId?.email || "N/A",
-      ...Object.values(reg.responses),
+      ...Object.values(reg.responses || {}),
     ]);
 
     const csvContent =
@@ -46,7 +87,7 @@ const EventRegisteredUsers = () => {
     document.body.removeChild(link);
   };
 
-  // ✅ Download Excel
+  // Download Excel
   const downloadExcel = () => {
     if (registrations.length === 0) return;
 
@@ -62,49 +103,63 @@ const EventRegisteredUsers = () => {
     XLSX.writeFile(workbook, "registrations.xlsx");
   };
 
+  if (loading) {
+    return (
+      <div className="p-6 max-w-6xl mx-auto">
+        <p className="text-center py-20 text-gray-600">Loading events...</p>
+      </div>
+    );
+  }
+
+  if (err) {
+    return (
+      <div className="p-6 max-w-6xl mx-auto">
+        <p className="text-center py-6 text-red-500">{err}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 mt-15">Event Registered Users</h2>
 
       {/* Show Events */}
       {!selectedEvent && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {events.map((event) => (
-            <div
-              key={event._id}
-              className="bg-white shadow-lg rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition"
-              onClick={() => loadRegistrations(event._id)}
-            >
-              {event.image && (
-                <img
-                  src={event.image}
-                  alt={event.name}
-                  className="w-full h-40 object-cover"
-                />
-              )}
-              <div className="p-4">
-                <h3 className="text-lg font-semibold">{event.name}</h3>
-                <p className="text-sm text-gray-600">
-  {event.description?.split(" ").slice(0, 3).join(" ") +
-    (event.description?.split(" ").length > 3 ? "..." : "")}
-</p>
-
-                <p className="text-xs text-gray-500 mt-2">
-                  {event.date} | {event.time}
-                </p>
-                <p className="text-xs text-gray-500">
-                  Department: {event.department}
-                </p>
-                <p className="text-xs text-gray-500">
-                  Location: {event.location}
-                </p>
-                <p className="text-xs text-teal-600 font-medium mt-1">
-                  Total Registrations: {event.totalRegistrations}
-                </p>
-              </div>
+        <>
+          {events.length === 0 ? (
+            <p className="text-gray-500">No events available for your department.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {events.map((event) => (
+                <div
+                  key={event._id}
+                  className="bg-white shadow-lg rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition"
+                  onClick={() => loadRegistrations(event._id)}
+                >
+                  {event.image && (
+                    <img
+                      src={event.image}
+                      alt={event.name}
+                      className="w-full h-40 object-cover"
+                    />
+                  )}
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold">{event.name}</h3>
+                    <p className="text-sm text-gray-600">{event.description}</p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {event.date} | {event.time}
+                    </p>
+                    <p className="text-xs text-gray-500">Department: {event.department}</p>
+                    <p className="text-xs text-gray-500">Location: {event.location}</p>
+                    <p className="text-xs text-teal-600 font-medium mt-1">
+                      Total Registrations: {event.totalRegistrations ?? 0}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
       {/* Show Registrations */}
@@ -149,7 +204,7 @@ const EventRegisteredUsers = () => {
                     <th className="border p-2">Name</th>
                     <th className="border p-2">Email</th>
                     {registrations[0] &&
-                      Object.keys(registrations[0].responses).map((field) => (
+                      Object.keys(registrations[0].responses || {}).map((field) => (
                         <th key={field} className="border p-2">
                           {field}
                         </th>
@@ -160,13 +215,9 @@ const EventRegisteredUsers = () => {
                   {registrations.map((reg, index) => (
                     <tr key={reg._id}>
                       <td className="border p-2">{index + 1}</td>
-                      <td className="border p-2">
-                        {reg.userId?.name || "N/A"}
-                      </td>
-                      <td className="border p-2">
-                        {reg.userId?.email || "N/A"}
-                      </td>
-                      {Object.values(reg.responses).map((val, idx) => (
+                      <td className="border p-2">{reg.userId?.name || "N/A"}</td>
+                      <td className="border p-2">{reg.userId?.email || "N/A"}</td>
+                      {Object.values(reg.responses || {}).map((val, idx) => (
                         <td key={idx} className="border p-2">
                           {val}
                         </td>
@@ -183,4 +234,4 @@ const EventRegisteredUsers = () => {
   );
 };
 
-export default EventRegisteredUsers;
+export default EventRegisteredDepartmentUsers;

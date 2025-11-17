@@ -12,7 +12,7 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "Events", path: "/events" },
-    { label: "How it works?", path: "/how-it-works" },
+    // { label: "How it works?", path: "/how-it-works" },
   ];
 
   // Hide Navbar for Department Admin pages
@@ -88,12 +88,12 @@ const Navbar = () => {
               </button>
             ) : (
               <>
-                <Link
+                {/* <Link
                   to="/login"
                   className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition"
                 >
                   Login
-                </Link>
+                </Link> */}
                 <Link
                   to="/register"
                   className="px-4 py-2 bg-yellow-400 text-white font-semibold rounded-lg hover:bg-yellow-500 transition"

@@ -34,6 +34,7 @@ router.get("/", async (req, res) => {
   }
 });
 // ✅ GET single event + its details
+// ✅ GET single event + its details + total registrations
 router.get("/:id", async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -42,14 +43,23 @@ router.get("/:id", async (req, res) => {
     const EventDetails = require("../models/EventDetails");
     const details = await EventDetails.findOne({ eventId: req.params.id });
 
+    // 👉 Count total registrations for this event
+    const totalRegistrations = await EventRegistration.countDocuments({
+      eventId: req.params.id
+    });
+
     res.json({
       ...event.toObject(),
-      dynamicFields: details ? details.dynamicFields : []
+      dynamicFields: details ? details.dynamicFields : [],
+      totalRegistrations,
     });
+
   } catch (err) {
+    console.error("GET event error:", err);
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 // POST create new event
 router.post("/add", async (req, res) => {

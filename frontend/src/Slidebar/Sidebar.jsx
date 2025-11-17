@@ -10,9 +10,17 @@ import {
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 
+
 const Sidebar = () => {
   const [sidenavOpen, setSidenavOpen] = useState(false);
    const navigate = useNavigate();
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+  // 🔥 Only show SuperAdmin sidebar if role === "superadmin"
+  if (!user || user.role !== "superadmin") {
+    return null;
+  }
    const handleLogout = () => {
     // Clear any stored authentication data
     localStorage.removeItem("token");
@@ -30,7 +38,9 @@ const Sidebar = () => {
   { name: "Event Registered Users", icon: UsersIcon },
   { name: "Events", icon: UsersIcon },
   { name: "Event Details", icon: UsersIcon },
+  { name: "Department Admin", icon: UsersIcon },
   { name: "Log out", icon: ArrowRightOnRectangleIcon },
+  
    
    
   ];
@@ -127,6 +137,8 @@ const Sidebar = () => {
 
 
     else if (name === "Event Registered Users") to = "/super-admin/event-registered-users";
+    else if (name === "Department Admin") to = "/super-admin/department-admins";
+
 
      if (name === "Log out") {
                 return (

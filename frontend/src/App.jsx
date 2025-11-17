@@ -25,6 +25,12 @@ import AdminLayout from "./pages/AdminLayout";
 import EventsList from "./Admin/SuperAdmin/EventsList";
 import EventDetailsList from "./Admin/SuperAdmin/EventDetailsList";
 import EditEventDetails from "./Admin/SuperAdmin/EditEventDetails";
+import EventRegisteredDepartmentUsers from "./Admin/DepartmentAdmin/EventRegisteredUsers";
+import DepartmentEventsList from "./Admin/DepartmentAdmin/EventsList";
+import DepartmentEventDetailsList from "./Admin/DepartmentAdmin/EventDetailsList";
+import  DepartmentEditEventDetails from "./Admin/DepartmentAdmin/EditEventDetails";
+import DepartmentAdminLayout from "./Admin/DepartmentAdmin/AdminLayout";
+import DepartmentAdmins from "./Admin/SuperAdmin/DepartmentAdmins";
 
 function AppWrapper() {
   const location = useLocation();
@@ -56,10 +62,11 @@ function AppWrapper() {
           <Route path="add-event-details" element={<AddEventDetails />} />
           <Route path="add-department-admin" element={<AddDepartmentAdmin />} />
           <Route path="events" element={<EventsList />} />
-          <Route path="/super-admin/event-details" element={<EventDetailsList />} />
-          <Route path="/super-admin/event-details-list" element={<EventDetailsList />} />
+          <Route path="event-details" element={<EventDetailsList />} />
+          <Route path="event-details-list" element={<EventDetailsList />} />
 <Route path="/super-admin/event-details-edit/:id" element={<EditEventDetails />} />
 
+    <Route path="/super-admin/department-admins" element={<DepartmentAdmins />} />
 
 
 
@@ -70,14 +77,23 @@ function AppWrapper() {
         </Route>
 
         {/* DEPARTMENT ADMIN ROUTES */}
-        <Route path="/department-admin" element={<AdminLayout />}>
+        <Route path="/department-admin" element={<DepartmentAdminLayout />}>
           <Route index element={<DepartmentAdminDashboard />} />
           <Route path="department-add-event" element={<DepAddEvent />} />
           <Route
             path="department-add-event-details"
             element={<DepAddEventDetails />}
           />
+          <Route
+            path="event-registered-users"
+            element={<EventRegisteredDepartmentUsers />}
+          />
+          <Route path="event-details-edit/:id" element={<DepartmentEditEventDetails />} />
+          <Route path="event-details-list" element={<DepartmentEventDetailsList />} />
+          <Route path="events" element={<DepartmentEventsList />} />
         </Route>
+        
+        
       </Routes>
     </>
   );

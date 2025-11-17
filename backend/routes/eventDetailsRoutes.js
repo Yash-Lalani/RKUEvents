@@ -16,16 +16,12 @@ router.put("/:id", async (req, res) => {
     const existing = await EventDetails.findById(req.params.id);
     if (!existing) return res.status(404).json({ msg: "Not found" });
 
-    // Merge dynamic fields (keep old + new instead of replacing)
-    const updatedFields = req.body.dynamicFields || [];
-    const mergedFields = [
-      ...existing.dynamicFields,
-      ...updatedFields.filter(
-        f => !existing.dynamicFields.some(old => old.label === f.label)
-      )
-    ];
+    // ❌ WRONG: Merge old + new (causing duplicates)
+    // existing.dynamicFields = mergedFields;
 
-    existing.dynamicFields = mergedFields;
+    // ✅ RIGHT: Replace fields with updated fields
+    existing.dynamicFields = req.body.dynamicFields;
+
     await existing.save();
 
     res.json({ msg: "Event details updated successfully", updated: existing });
@@ -34,6 +30,7 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 });
+
 router.post("/add-details", async (req, res) => {
   try {
     const { eventId, department, dynamicFields } = req.body;

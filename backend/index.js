@@ -1,11 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const dotenv = require("dotenv");
+const dotenv = require("dotenv"); 
 const eventDetailsRoutes = require("./routes/eventDetailsRoutes");
 const eventRegistrationRoutes = require("./routes/eventRegistrationRoutes");
 const departmentAdminRoutes = require("./routes/departmentAdmin");
 const superAdminEventRoutes = require("./routes/superAdminEvents");
+
 
 
 dotenv.config();
@@ -23,6 +24,9 @@ app.use("/api/department-admin", departmentAdminRoutes);
 app.use("/api/super-admin/events", superAdminEventRoutes);
 app.use("/api/stats", require("./routes/dashboardStats"));
 app.use("/api/profile", require("./routes/profileRoutes"));
+app.use("/api/department-stats", require("./routes/departmentAdminStats"));
+
+app.use("/api/super-admin/department-admins", require("./routes/departmentAdminSuper"));
 
 
 

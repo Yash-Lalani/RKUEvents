@@ -7,30 +7,70 @@ const DepartmentAdmin = require("../models/DepartmentAdmin");
 const router = express.Router();
 
 // ✅ Register (students by default)
+// router.post("/register", async (req, res) => {
+//   try {
+//     const { name, email, enrollmentNumber, department, password } = req.body;
+
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) return res.status(400).json({ msg: "User already exists" });
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const user = new User({
+//       name,
+//       email,
+//       enrollmentNumber,
+//       department,
+//       password: hashedPassword, // store hashed password
+//     });
+
+//     await user.save();
+
+//     res.json({ msg: "Registration successful" });
+//   } catch (err) {
+//     res.status(500).json({ msg: "Server error", error: err.message });
+//   }
+// });
+
+
+
 router.post("/register", async (req, res) => {
   try {
     const { name, email, enrollmentNumber, department, password } = req.body;
 
+    if (!name || !email || !password || !enrollmentNumber || !department) {
+      return res.status(400).json({ msg: "All fields are required" });
+    }
+
+    if (!email.endsWith("@rku.ac.in")) {
+      return res.status(400).json({ msg: "Only RKU students can register" });
+    }
+
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ msg: "User already exists" });
+    if (existingUser) {
+      return res.status(400).json({ msg: "Email already registered." });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({
+    await new User({
       name,
       email,
       enrollmentNumber,
       department,
-      password: hashedPassword, // store hashed password
-    });
+      password: hashedPassword,
+    }).save();
 
-    await user.save();
+    res.status(201).json({ msg: "Registration successful!" });
 
-    res.json({ msg: "Registration successful" });
   } catch (err) {
+    console.error("REGISTER ERROR:", err);
     res.status(500).json({ msg: "Server error", error: err.message });
   }
 });
+
+
+
 
 // ✅ Login
 router.post("/login", async (req, res) => {

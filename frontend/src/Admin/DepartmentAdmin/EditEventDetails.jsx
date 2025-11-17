@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-const EditEventDetails = () => {
-  const { id } = useParams();
+const DepartmentEditEventDetails = () => {
+  const { id } = useParams(); // eventDetails _id from URL
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -12,17 +12,19 @@ const EditEventDetails = () => {
   const [selectedEvent, setSelectedEvent] = useState("");
   const [dynamicFields, setDynamicFields] = useState([]);
 
+  // Fetch departments (static)
   useEffect(() => {
     setDepartments(["SOE", "SOS", "SOM", "LAW", "PHARMACY"]);
   }, []);
 
+  // Fetch event details by ID
   useEffect(() => {
     const fetchDetails = async () => {
       try {
         const res = await fetch(`http://localhost:5000/api/event-details/detail/${id}`);
-        const data = await res.json();
 
-        const detail = Array.isArray(data) ? data[0] : data;
+        const data = await res.json();
+        const detail = Array.isArray(data) ? data[0] : data; // handle both shapes
         if (detail) {
           setSelectedDepartment(detail.department);
           setSelectedEvent(detail.eventId?._id || detail.eventId);
@@ -37,6 +39,7 @@ const EditEventDetails = () => {
     fetchDetails();
   }, [id]);
 
+  // Fetch events for selected department
   useEffect(() => {
     if (!selectedDepartment) return;
     fetch(`http://localhost:5000/api/events?department=${selectedDepartment}`)
@@ -53,11 +56,6 @@ const EditEventDetails = () => {
 
   const handleAddField = () => {
     setDynamicFields([...dynamicFields, { label: "", type: "text", options: [] }]);
-  };
-
-  const handleDeleteField = (index) => {
-    const newFields = dynamicFields.filter((_, i) => i !== index);
-    setDynamicFields(newFields);
   };
 
   const handleSave = async () => {
@@ -80,7 +78,7 @@ const EditEventDetails = () => {
       const data = await res.json();
       if (res.ok) {
         alert("Event details updated successfully!");
-        navigate("/super-admin/event-details-list");
+        navigate("/department-admin/event-details-list"); // back to list
       } else {
         alert(data.msg || "Update failed");
       }
@@ -96,30 +94,34 @@ const EditEventDetails = () => {
     <div className="p-6 max-w-3xl mx-auto bg-white shadow-md rounded-xl mt-6">
       <h2 className="text-xl font-bold mb-4">Edit Event Details</h2>
 
-      <select
-        value={selectedDepartment}
-        disabled
-        className="w-full border p-2 rounded mb-4 bg-gray-100 cursor-not-allowed"
-      >
-        <option value={selectedDepartment}>{selectedDepartment}</option>
-      </select>
+  {/* Department (Read-only) */}
+<select
+  value={selectedDepartment}
+  disabled
+  className="w-full border p-2 rounded mb-4 bg-gray-100 cursor-not-allowed"
+>
+  <option value={selectedDepartment}>{selectedDepartment}</option>
+</select>
 
-      <select
-        value={selectedEvent}
-        disabled
-        className="w-full border p-2 rounded mb-4 bg-gray-100 cursor-not-allowed"
-      >
-        {events.length > 0 && (
-          <option value={selectedEvent}>
-            {events.find(ev => ev._id === selectedEvent)?.name || "Selected Event"}
-          </option>
-        )}
-      </select>
+{/* Event (Read-only) */}
+<select
+  value={selectedEvent}
+  disabled
+  className="w-full border p-2 rounded mb-4 bg-gray-100 cursor-not-allowed"
+>
+  {events.length > 0 && (
+    <option value={selectedEvent}>
+      {events.find(ev => ev._id === selectedEvent)?.name || "Selected Event"}
+    </option>
+  )}
+</select>
 
+
+      {/* Dynamic Fields */}
       <h3 className="text-lg font-semibold mb-2">Edit Registration Fields</h3>
 
       {dynamicFields.map((field, i) => (
-        <div key={i} className="mb-4 border p-3 rounded bg-gray-50">
+        <div key={i} className="mb-4">
           <input
             type="text"
             placeholder="Field Label"
@@ -127,7 +129,6 @@ const EditEventDetails = () => {
             onChange={e => handleFieldChange(i, "label", e.target.value)}
             className="border p-2 rounded mb-2 w-full"
           />
-
           <select
             value={field.type}
             onChange={e => handleFieldChange(i, "type", e.target.value)}
@@ -148,14 +149,6 @@ const EditEventDetails = () => {
               className="border p-2 rounded w-full mt-2"
             />
           )}
-
-          {/* DELETE BUTTON */}
-          <button
-            onClick={() => handleDeleteField(i)}
-            className="bg-red-500 text-white px-3 py-1 rounded mt-2"
-          >
-            Delete
-          </button>
         </div>
       ))}
 
@@ -176,4 +169,4 @@ const EditEventDetails = () => {
   );
 };
 
-export default EditEventDetails;
+export default DepartmentEditEventDetails;

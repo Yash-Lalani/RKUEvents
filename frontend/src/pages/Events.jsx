@@ -33,7 +33,10 @@ const Card = ({
 
       <div className="p-5 flex flex-col gap-2">
         <h2 className="font-bold text-xl">{name}</h2>
-        <p className="text-sm text-gray-600">{description}</p>
+        <p className="text-sm text-gray-600">
+  {description?.split(" ").slice(0, 3).join(" ") + (description?.split(" ").length > 3 ? "..." : "")}
+</p>
+
 
         <div className="text-sm text-gray-700 mt-2 space-y-1">
           <div className="flex items-center gap-2">
@@ -87,7 +90,7 @@ const Events = () => {
   return (
     <div className="pt-24 px-6 pb-12 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold text-center mb-10 text-blue-600">
-        Upcoming Events
+        Events
       </h1>
       {events.length === 0 ? (
         <p className="text-center text-gray-500">No events available</p>
