@@ -2,12 +2,7 @@ const mongoose = require("mongoose");
 
 const eventDetailsSchema = new mongoose.Schema({
   eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Event", required: true },
-  department: {
-    
-    type: String,
-    enum: ["SOE", "SOS", "SOM", "LAW", "PHARMACY"],
-    required: true
-  },
+  // department field removed, relying on parent Event document
   dynamicFields: [
     {
       label: { type: String, required: true },

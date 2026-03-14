@@ -1,7 +1,9 @@
 const express = require("express");
 const Event = require("../models/Event");
 const EventRegistration = require("../models/EventRegistration");
-
+const EventDetails = require("../models/EventDetails");
+const User = require("../models/User");
+const emailService = require("../utils/emailService");
 
 const router = express.Router();
 
@@ -12,7 +14,9 @@ router.get("/", async (req, res) => {
 
     let query = {};
     if (department) {
-      query.department = department;
+      if (department !== "ALL") {
+        query.departments = { $in: [department, "ALL"] };
+      }
     }
 
     const events = await Event.find(query);
@@ -64,10 +68,10 @@ router.get("/:id", async (req, res) => {
 // POST create new event
 router.post("/add", async (req, res) => {
   try {
-    const { name, description, date, time, location, image, department } = req.body;
+    const { name, description, date, time, location, image, departments } = req.body;
 
-    if (!name || !description || !date || !time || !location || !department) {
-      return res.status(400).json({ msg: "Please fill all fields" });
+    if (!name || !description || !date || !time || !location || !departments || !departments.length) {
+      return res.status(400).json({ msg: "Please fill all fields, including target departments" });
     }
 
     const newEvent = new Event({
@@ -77,10 +81,24 @@ router.post("/add", async (req, res) => {
       time,
       location,
       image,
-      department, // ✅ make sure this is included
+      departments, // ✅ multiple departments support
     });
 
     await newEvent.save();
+
+    // Broadcast email to target students
+    try {
+      let users = [];
+      if (departments.some(d => d.toUpperCase() === "ALL")) {
+        users = await User.find({ role: "student" });
+      } else {
+        users = await User.find({ role: "student", department: { $in: departments } });
+      }
+      console.log(`Broadcasting new event email to ${users.length} student(s) in departments: ${departments.join(", ")}`);
+      await emailService.sendNewEventEmail(users, newEvent);
+    } catch (emailErr) {
+      console.error("Failed to broadcast new event email:", emailErr.message);
+    }
 
     res.json({ msg: "Event created successfully", event: newEvent });
   } catch (err) {
@@ -123,12 +141,28 @@ router.post("/add", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   try {
-    await Event.findByIdAndDelete(req.params.id);
-    res.json({ message: "Event removed" });
+    const eventId = req.params.id;
+
+    // Delete the event
+    const deletedEvent = await Event.findByIdAndDelete(eventId);
+    if (!deletedEvent) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Delete all registrations and details of this event
+    await EventRegistration.deleteMany({ eventId });
+    await EventDetails.deleteMany({ eventId });
+
+    res.json({
+      message: "Event and related registrations removed successfully",
+    });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
+
 
 router.put("/:id", async (req, res) => {
   try {

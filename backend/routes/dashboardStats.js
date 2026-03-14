@@ -5,7 +5,7 @@ const Event = require("../models/Event");
 const User = require("../models/User");
 const EventRegistration = require("../models/EventRegistration");
 
-// --- Dashboard Cards ---
+// --- Dashboard Cards ---  
 router.get("/cards", async (req, res) => {
   try {
     const totalEvents = await Event.countDocuments();
@@ -45,9 +45,10 @@ router.get("/monthly-registrations", async (req, res) => {
 router.get("/events-department", async (req, res) => {
   try {
     const data = await Event.aggregate([
+      { $unwind: "$departments" },
       {
         $group: {
-          _id: "$department",
+          _id: "$departments",
           value: { $sum: 1 },
         },
       },

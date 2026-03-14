@@ -10,7 +10,9 @@ router.get("/cards/:department", async (req, res) => {
     const { department } = req.params;
 
     // 1️⃣ Get all event IDs belonging to this department
-    const deptEvents = await Event.find({ department }).select("_id");
+    const deptEvents = await Event.find({
+      departments: { $in: [department, "ALL"] }
+    }).select("_id");
     const eventIds = deptEvents.map(e => e._id);
 
     // 2️⃣ Count event registrations ONLY for events of this department
@@ -37,7 +39,9 @@ router.get("/monthly/:department", async (req, res) => {
   try {
     const { department } = req.params;
 
-    const deptEvents = await Event.find({ department }).select("_id");
+    const deptEvents = await Event.find({
+      departments: { $in: [department, "ALL"] }
+    }).select("_id");
     const eventIds = deptEvents.map(e => e._id);
 
     const data = await EventRegistration.aggregate([
@@ -64,7 +68,9 @@ router.get("/events/:department", async (req, res) => {
   try {
     const dept = req.params.department;
 
-    const count = await Event.countDocuments({ department: dept });
+    const count = await Event.countDocuments({
+      departments: { $in: [dept, "ALL"] }
+    });
 
     res.json([
       { _id: dept, value: count }  // return in pie chart format

@@ -1,182 +1,119 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   HomeIcon,
   XMarkIcon,
-   PlusCircleIcon,
+  PlusCircleIcon,
   UserPlusIcon,
   UsersIcon,
   ArrowRightOnRectangleIcon,
+  Bars3Icon,
 } from "@heroicons/react/24/outline";
-
 
 const Sidebar = () => {
   const [sidenavOpen, setSidenavOpen] = useState(false);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  // 🔥 Only show SuperAdmin sidebar if role === "superadmin"
-  if (!user || user.role !== "superadmin") {
-    return null;
-  }
-   const handleLogout = () => {
-    // Clear any stored authentication data
+  if (!user || user.role !== "superadmin") return null;
+
+  const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     sessionStorage.clear();
-
-    // Redirect to login
     navigate("/login");
   };
+
   const menuItems = [
-    { name: "Dashboard", icon: HomeIcon },
-    { name: "Add Events", icon: PlusCircleIcon },
-    { name: "Add Events Details", icon: PlusCircleIcon },
-  { name: "Add Department Admin", icon: UserPlusIcon },
-  { name: "Event Registered Users", icon: UsersIcon },
-  { name: "Events", icon: UsersIcon },
-  { name: "Event Details", icon: UsersIcon },
-  { name: "Department Admin", icon: UsersIcon },
-  { name: "Log out", icon: ArrowRightOnRectangleIcon },
-  
-   
-   
+    { name: "Dashboard", icon: HomeIcon, to: "/super-admin" },
+    { name: "Add Events", icon: PlusCircleIcon, to: "/super-admin/add-event" },
+    { name: "Add Events Details", icon: PlusCircleIcon, to: "/super-admin/add-event-details" },
+    { name: "Add Department Admin", icon: UserPlusIcon, to: "/super-admin/add-department-admin" },
+    { name: "Event Registered Users", icon: UsersIcon, to: "/super-admin/event-registered-users" },
+    { name: "Events", icon: UsersIcon, to: "/super-admin/events" },
+    { name: "Event Details", icon: UsersIcon, to: "/super-admin/event-details-list" },
+    { name: "Department Admin", icon: UsersIcon, to: "/super-admin/department-admins" },
+    { name: "Total Users", icon: UsersIcon, to: "/super-admin/users" },
   ];
-  
-
-  
-
 
   return (
-    <div className="font-poppins relative">
-
-      {/* Mobile Toggle Button */}
+    <>
       <button
         onClick={() => setSidenavOpen(true)}
-        className="sm:hidden fixed top-4 left-4 z-50 p-2 bg-white border border-gray-300 rounded-md shadow"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 glass rounded-lg text-white border border-white/10 hover:bg-white/10 transition"
       >
-        <svg
-          className="w-6 h-6 text-gray-700"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fillRule="evenodd"
-            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <Bars3Icon className="w-6 h-6" />
       </button>
 
-      {/* Backdrop */}
-      {sidenavOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-40 sm:hidden"
-          onClick={() => setSidenavOpen(false)}
-        ></div>
-      )}
+      <AnimatePresence>
+        {sidenavOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setSidenavOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
-      {/* Sidebar */}
-      <div
-        className={`fixed top-0 left-0 z-50 h-full w-60 bg-white shadow-xl transform transition-transform duration-300 ease-in-out
-        ${sidenavOpen ? "translate-x-0" : "-translate-x-full"} sm:translate-x-0 sm:relative sm:flex`}
+      <motion.div
+        className={`fixed lg:sticky top-0 left-0 z-50 h-[100dvh] w-72 glass border-r border-white/10 shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col transition-transform duration-300 ${
+          sidenavOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
       >
-        <div className="space-y-6 mt-10 px-4 w-full overflow-y-auto">
-          {/* Close Button (mobile only) */}
-          <div className="sm:hidden flex justify-end">
-            <button
-              onClick={() => setSidenavOpen(false)}
-              className="text-gray-700 hover:text-red-500"
-            >
-              <XMarkIcon className="w-6 h-6" />
-            </button>
-          </div>
-
-          <h1 className="text-2xl font-bold text-center text-teal-600">
+        <div className="p-6 flex items-center justify-between border-b border-white/10">
+          <h1 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-wide">
             SuperAdmin
           </h1>
+          <button onClick={() => setSidenavOpen(false)} className="lg:hidden text-gray-400 hover:text-white transition">
+            <XMarkIcon className="w-6 h-6" />
+          </button>
+        </div>
 
-          {/* Search */}
-          <div className="flex border-2 border-gray-200 rounded-md focus-within:ring-2 ring-teal-500">
+        <div className="p-4 border-b border-white/10">
+          <div className="flex bg-black/40 border border-white/10 rounded-xl focus-within:ring-2 ring-blue-500 overflow-hidden transition">
             <input
               type="text"
-              className="w-full px-2 py-2 text-sm text-gray-600 focus:outline-none rounded-l-md"
-              placeholder="Search"
+              className="w-full px-4 py-3 bg-transparent text-sm text-white focus:outline-none placeholder-gray-500"
+              placeholder="Search..."
             />
-            <button className="px-2 py-2 hidden md:block">
-              <svg
-                className="w-4 h-4 text-gray-500"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 
-                     4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
           </div>
-
-          {/* Menu */}
-          <nav className="flex flex-col space-y-2">
-  {menuItems.map(({ name, icon: Icon }) => {
-    // Determine the correct route for each menu item
-    let to = "#"; 
-    if (name === "Add Events") to = "/super-admin/add-event";
-    else if (name === "Add Events Details") to = "/super-admin/add-event-details";
-    else if (name === "Dashboard") to = "/super-admin";
-
-    else if (name === "Add Department Admin") to = "/super-admin/add-department-admin";
-    else if (name === "Events") to = "/super-admin/events";
-    else if (name === "Add Events Details") to = "/super-admin/event-details";
-    else if (name === "Event Details") to = "/super-admin/event-details-list";
-
-
-    else if (name === "Event Registered Users") to = "/super-admin/event-registered-users";
-    else if (name === "Department Admin") to = "/super-admin/department-admins";
-
-
-     if (name === "Log out") {
-                return (
-                  <button
-                    key={name}
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 text-sm font-medium text-gray-700 py-2 px-2 hover:bg-red-500 hover:text-white rounded-md transition duration-150 w-full text-left"
-                  >
-                    <Icon className="w-5 h-5" />
-                    {name}
-                  </button>
-                );
-              }
-
-    return (
-      <Link
-        key={name}
-        to={to}
-        className="flex items-center gap-2 text-sm font-medium text-gray-700 py-2 px-2 hover:bg-teal-500 hover:text-white rounded-md transition duration-150"
-      >
-        <Icon className="w-5 h-5" />
-        {name}
-      </Link>
-    );
-  })}
-</nav>
-
         </div>
-      </div>
 
-      {/* Main content placeholder */}
-      {/* <main className="flex-1 p-4 overflow-y-auto">
-        <h1 className="text-xl font-bold">Admin Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          This is the main content area. Resize the screen to see responsive behavior.
-        </p>
-      </main> */}
-    </div>
+        <nav className="flex-1 overflow-y-auto p-4 space-y-2 webkit-scrollbar-hide">
+          {menuItems.map(({ name, icon: Icon, to }) => {
+            const isActive = location.pathname === to || (to !== "/super-admin" && location.pathname.startsWith(to));
+            return (
+              <Link
+                key={name}
+                to={to}
+                onClick={() => setSidenavOpen(false)}
+                className={`flex items-center gap-3 text-sm font-medium py-3 px-4 rounded-xl transition duration-300 ${
+                  isActive
+                    ? "bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-300 border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.15)]"
+                    : "text-gray-400 hover:bg-white/5 hover:text-white border border-transparent"
+                }`}
+              >
+                <Icon className={`w-5 h-5 ${isActive ? "text-blue-400" : "text-gray-500"}`} />
+                {name}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="p-4 border-t border-white/10">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 text-sm font-medium text-red-400 py-3 px-4 hover:bg-red-500/10 hover:border-red-500/30 border border-transparent rounded-xl transition w-full text-left"
+          >
+            <ArrowRightOnRectangleIcon className="w-5 h-5" />
+            Log out
+          </button>
+        </div>
+      </motion.div>
+    </>
   );
 };
 

@@ -33,15 +33,14 @@ router.put("/:id", async (req, res) => {
 
 router.post("/add-details", async (req, res) => {
   try {
-    const { eventId, department, dynamicFields } = req.body;
+    const { eventId, dynamicFields } = req.body;
 
-    if (!eventId || !department || !dynamicFields || !dynamicFields.length) {
+    if (!eventId || !dynamicFields || !dynamicFields.length) {
       return res.status(400).json({ msg: "Please provide all required fields" });
     }
 
     const newDetails = new EventDetails({
       eventId,
-      department,
       dynamicFields
     });
 

@@ -1,74 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  CalendarDaysIcon,
-  ClockIcon,
-  MapPinIcon,
-  UserGroupIcon,
-} from '@heroicons/react/24/outline'; // Install @heroicons/react if not already
-
-const Card = ({
-  image,
-  name,
-  description,
-  date,
-  time,
-  location,
-  totalRegistrations,
-  buttonText,
-  buttonBg = "bg-purple-600",
-  buttonHover = "hover:bg-purple-700",
-  onClick,
-}) => {
-  return (
-    <div
-      onClick={onClick}
-      className="w-full max-w-md bg-white rounded-xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 cursor-pointer"
-    >
-      <img
-        className="h-56 w-full object-cover rounded-t-xl"
-        src={image}
-        alt={name}
-      />
-
-      <div className="p-5 flex flex-col gap-2">
-        <h2 className="font-bold text-xl">{name}</h2>
-        <p className="text-sm text-gray-600">
-  {description?.split(" ").slice(0, 3).join(" ") + (description?.split(" ").length > 3 ? "..." : "")}
-</p>
-
-
-        <div className="text-sm text-gray-700 mt-2 space-y-1">
-          <div className="flex items-center gap-2">
-            <CalendarDaysIcon className="w-5 h-5 text-blue-500" />
-            <span>{date}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <ClockIcon className="w-5 h-5 text-indigo-500" />
-            <span>{time}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPinIcon className="w-5 h-5 text-red-500" />
-            <span>{location}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <UserGroupIcon className="w-5 h-5 text-green-600" />
-            <span>{totalRegistrations} registered</span>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <button
-            className={`text-white px-4 py-2 rounded-md inline-block ${buttonBg} ${buttonHover} transition`}
-          >
-            {buttonText || "Learn More"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
+import { motion } from "framer-motion";
+import { ArrowRightIcon } from '@heroicons/react/24/outline'; 
+import Card from "../Card/Card";
 
 const CardsContainer = () => {
   const navigate = useNavigate();
@@ -78,35 +12,66 @@ const CardsContainer = () => {
     const fetchEvents = async () => {
       try {
         const res = await fetch("http://localhost:5000/api/events");
-        const data = await res.json();
-        setEvents(data);
+        let data = await res.json();
+        data = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setEvents(data.slice(0, 3));
       } catch (err) {
         console.error("Error fetching events:", err);
       }
     };
-
     fetchEvents();
   }, []);
 
   return (
-    <div className="pt-24 px-6 pb-12 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-center mb-10 text-blue-600">
-        Events
-      </h1>
-      {events.length === 0 ? (
-        <p className="text-center text-gray-500">No events available</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
-          {events.map((event) => (
-            <Card
-              key={event._id}
-              {...event}
-              onClick={() => navigate(`/event/${event._id}`)}
-            />
-          ))}
-          
+    <div className="py-24 px-6 bg-transparent relative z-10 w-full">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="flex flex-col items-center mb-16">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mb-4 tracking-tight shadow-black drop-shadow-lg"
+          >
+            Featured Events
+          </motion.h2>
+          <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]" />
         </div>
-      )}
+
+        {events.length === 0 ? (
+          <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md">
+            <p className="text-gray-400 text-lg font-medium tracking-wide">No exciting events available right now.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center w-full">
+            {events.map((event, idx) => (
+              <motion.div
+                key={event._id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.15 }}
+                className="w-full flex justify-center"
+              >
+                <Card
+                  {...event}
+                  onClick={() => navigate(`/event/${event._id}`)}
+                />
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-20 flex justify-center">
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/events")}
+            className="group px-10 py-4 rounded-full border-2 border-blue-500/50 hover:border-blue-500 text-blue-400 hover:text-white transition-all font-bold backdrop-blur-md flex items-center gap-3 hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] bg-blue-500/10 hover:bg-blue-600"
+          >
+            Explore All Operations <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </motion.button>
+        </div>
+      </div>
     </div>
   );
 };

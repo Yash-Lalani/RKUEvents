@@ -16,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+
+
 const authRoutes = require("./routes/auth");
 const eventRoutes = require("./routes/eventRoutes");
 app.use("/api/event-details", eventDetailsRoutes);
@@ -27,6 +29,8 @@ app.use("/api/profile", require("./routes/profileRoutes"));
 app.use("/api/department-stats", require("./routes/departmentAdminStats"));
 
 app.use("/api/super-admin/department-admins", require("./routes/departmentAdminSuper"));
+app.use("/api/users", require("./routes/users"));
+
 
 
 

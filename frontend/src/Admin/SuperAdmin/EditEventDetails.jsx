@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 const EditEventDetails = () => {
@@ -6,15 +6,10 @@ const EditEventDetails = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [departments, setDepartments] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedEvent, setSelectedEvent] = useState("");
   const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => {
-    setDepartments(["SOE", "SOS", "SOM", "LAW", "PHARMACY"]);
-  }, []);
 
   useEffect(() => {
     const fetchDetails = async () => {

@@ -35,8 +35,32 @@ router.get("/:eventId/registrations", async (req, res) => {
       .sort({ createdAt: -1 });
 
     res.json(registrations);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch registrations" });
+  } catch (error) {
+    res.status(500).json({ msg: "Server Error" });
+  }
+});
+
+// ✅ Delete a specific registration
+router.delete("/registrations/:id", async (req, res) => {
+  try {
+    const deletedReg = await EventRegistration.findByIdAndDelete(req.params.id);
+    if (!deletedReg) {
+      return res.status(404).json({ msg: "Registration not found" });
+    }
+    res.json({ msg: "Registration successfully removed" });
+  } catch (error) {
+    res.status(500).json({ msg: "Server Error" });
+  }
+});
+
+// ✅ Clear all registrations for a specific event
+router.delete("/:eventId/registrations", async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    await EventRegistration.deleteMany({ eventId });
+    res.json({ msg: "All registrations for this event have been cleared." });
+  } catch (error) {
+    res.status(500).json({ msg: "Server Error" });
   }
 });
 

@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   enrollmentNumber: { type: String, required: true, unique: true },
   department: { 
     type: String, 
-    enum: ["SOE", "SOM", "SOS", "All"], 
+    enum: ["SOE", "SOM", "SOS","PHARMACY", "All"], 
     required: true 
   },
   password: { type: String, required: true },

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const DepartmentEventDetailsList = () => {
@@ -44,7 +44,7 @@ const DepartmentEventDetailsList = () => {
         </thead>
 
         <tbody>
-          {details.map((d) => (
+          {details.filter(d => d.eventId).map((d) => (
             <tr key={d._id} className="border-b">
               <td className="p-2">{d.eventId?.name}</td>
               <td className="p-2">{d.department}</td>

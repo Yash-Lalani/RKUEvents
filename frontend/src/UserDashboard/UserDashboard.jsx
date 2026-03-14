@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 
 export default function UserDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -199,3 +200,9 @@ function Card({ title, value, color }) {
     </div>
   );
 }
+
+Card.propTypes = {
+  title: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  color: PropTypes.oneOf(["green", "yellow", "blue"]).isRequired,
+};

@@ -42,13 +42,18 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({ msg: "All fields are required" });
     }
 
-    if (!email.endsWith("@rku.ac.in")) {
-      return res.status(400).json({ msg: "Only RKU students can register" });
-    }
+    // if (!email.endsWith("@rku.ac.in")) {
+    //   return res.status(400).json({ msg: "Only RKU students can register" });
+    // }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ msg: "Email already registered." });
+    }
+
+    const existingEnrollment = await User.findOne({ enrollmentNumber });
+    if (existingEnrollment) {
+      return res.status(400).json({ msg: "Enrollment number already registered." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

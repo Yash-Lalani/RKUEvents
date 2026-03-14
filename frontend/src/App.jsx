@@ -31,6 +31,8 @@ import DepartmentEventDetailsList from "./Admin/DepartmentAdmin/EventDetailsList
 import  DepartmentEditEventDetails from "./Admin/DepartmentAdmin/EditEventDetails";
 import DepartmentAdminLayout from "./Admin/DepartmentAdmin/AdminLayout";
 import DepartmentAdmins from "./Admin/SuperAdmin/DepartmentAdmins";
+import SuperAdminUsersList from "./Admin/SuperAdmin/SuperAdminUsersList";
+import EditUser from "./Admin/SuperAdmin/EditUser";
 
 function AppWrapper() {
   const location = useLocation();
@@ -64,12 +66,10 @@ function AppWrapper() {
           <Route path="events" element={<EventsList />} />
           <Route path="event-details" element={<EventDetailsList />} />
           <Route path="event-details-list" element={<EventDetailsList />} />
-<Route path="/super-admin/event-details-edit/:id" element={<EditEventDetails />} />
-
-    <Route path="/super-admin/department-admins" element={<DepartmentAdmins />} />
-
-
-
+          <Route path="event-details-edit/:id" element={<EditEventDetails />} />
+          <Route path="department-admins" element={<DepartmentAdmins />} />
+          <Route path="users" element={<SuperAdminUsersList />} />
+          <Route path="edit-user/:id" element={<EditUser />} />
           <Route
             path="event-registered-users"
             element={<EventRegisteredUsers />}

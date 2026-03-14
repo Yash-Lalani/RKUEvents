@@ -1,73 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  CalendarDaysIcon,
-  ClockIcon,
-  MapPinIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
-
-const Card = ({
-  image,
-  name,
-  description,
-  date,
-  time,
-  location,
-  totalRegistrations,
-  buttonText,
-  buttonBg = "bg-purple-600",
-  buttonHover = "hover:bg-purple-700",
-  onClick,
-}) => {
-  return (
-    <div
-      onClick={onClick}
-      className="w-full max-w-md bg-white rounded-xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1 cursor-pointer"
-    >
-      <img
-        className="h-56 w-full object-cover rounded-t-xl"
-        src={image}
-        alt={name}
-      />
-
-      <div className="p-5 flex flex-col gap-2">
-        <h2 className="font-bold text-xl">{name}</h2>
-        <p className="text-sm text-gray-600">
-  {description?.split(" ").slice(0, 3).join(" ") + (description?.split(" ").length > 3 ? "..." : "")}
-</p>
-
-
-        <div className="text-sm text-gray-700 mt-2 space-y-1">
-          <div className="flex items-center gap-2">
-            <CalendarDaysIcon className="w-5 h-5 text-blue-500" />
-            <span>{date}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <ClockIcon className="w-5 h-5 text-indigo-500" />
-            <span>{time}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPinIcon className="w-5 h-5 text-red-500" />
-            <span>{location}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <UserGroupIcon className="w-5 h-5 text-green-600" />
-            <span>{totalRegistrations} registered</span>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <button
-            className={`text-white px-4 py-2 rounded-md inline-block ${buttonBg} ${buttonHover} transition`}
-          >
-            {buttonText || "Learn More"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { motion } from "framer-motion";
+import Footer from "../Footer/Footer";
+import Card from "../components/Card/Card";
 
 const Events = () => {
   const navigate = useNavigate();
@@ -88,25 +23,49 @@ const Events = () => {
   }, []);
 
   return (
-    <div className="pt-24 px-6 pb-12 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-center mb-10 text-blue-600">
-        Events
-      </h1>
-      {events.length === 0 ? (
-        <p className="text-center text-gray-500">No events available</p>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
-          {events.map((event) => (
-            <Card
-              key={event._id}
-              {...event}
-              onClick={() => navigate(`/event/${event._id}`)}
-            />
-          ))}
-          
+    <>
+      <div className="min-h-screen bg-grid py-24 px-6 relative">
+        <div className="absolute top-1/3 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/3 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col items-center mb-16">
+            <motion.h1 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mb-4 tracking-tight shadow-black drop-shadow-lg"
+            >
+              All Events
+            </motion.h1>
+            <div className="w-24 h-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.6)]" />
+          </div>
+
+          {events.length === 0 ? (
+            <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md">
+              <p className="text-gray-400 text-lg font-medium tracking-wide">No events available at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center w-full">
+              {events.map((event, idx) => (
+                <motion.div
+                  key={event._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="w-full flex justify-center"
+                >
+                  <Card
+                    {...event}
+                    onClick={() => navigate(`/event/${event._id}`)}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 

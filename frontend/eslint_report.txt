@@ -1,0 +1,75 @@
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\Admin\DepartmentAdmin\DepartmentAdminDashboard.jsx[24m[0m
+[0m  [2m24:6[22m   [33mwarning[39m  React Hook useEffect has a missing dependency: 'fetchDashboardData'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m  [2m52:23[22m  [31merror[39m    'title' is missing in props validation                                                                                 [2mreact/prop-types[22m[0m
+[0m  [2m52:30[22m  [31merror[39m    'value' is missing in props validation                                                                                 [2mreact/prop-types[22m[0m
+[0m  [2m52:37[22m  [31merror[39m    'icon' is missing in props validation                                                                                  [2mreact/prop-types[22m[0m
+[0m  [2m52:49[22m  [31merror[39m    'colorClass' is missing in props validation                                                                            [2mreact/prop-types[22m[0m
+[0m  [2m60:88[22m  [31merror[39m    'colorClass.replace' is missing in props validation                                                                    [2mreact/prop-types[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\Admin\DepartmentAdmin\EditEventDetails.jsx[24m[0m
+[0m  [2m9:10[22m  [31merror[39m  'departments' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\Admin\DepartmentAdmin\EventDetailsList.jsx[24m[0m
+[0m  [2m26:6[22m  [33mwarning[39m  React Hook useEffect has missing dependencies: 'dept' and 'user?.role'. Either include them or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\Admin\DepartmentAdmin\EventsList.jsx[24m[0m
+[0m  [2m60:6[22m  [33mwarning[39m  React Hook useEffect has a missing dependency: 'fetchEvents'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\Admin\SuperAdmin\AdminDashboard.jsx[24m[0m
+[0m  [2m21:6[22m   [33mwarning[39m  React Hook useEffect has a missing dependency: 'fetchDashboardData'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m  [2m52:23[22m  [31merror[39m    'title' is missing in props validation                                                                                 [2mreact/prop-types[22m[0m
+[0m  [2m52:30[22m  [31merror[39m    'value' is missing in props validation                                                                                 [2mreact/prop-types[22m[0m
+[0m  [2m52:37[22m  [31merror[39m    'icon' is missing in props validation                                                                                  [2mreact/prop-types[22m[0m
+[0m  [2m52:49[22m  [31merror[39m    'colorClass' is missing in props validation                                                                            [2mreact/prop-types[22m[0m
+[0m  [2m60:88[22m  [31merror[39m    'colorClass.replace' is missing in props validation                                                                    [2mreact/prop-types[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\Admin\SuperAdmin\EditEventDetails.jsx[24m[0m
+[0m  [2m9:10[22m  [31merror[39m  'departments' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\Admin\SuperAdmin\EditUser.jsx[24m[0m
+[0m  [2m36:6[22m  [33mwarning[39m  React Hook useEffect has a missing dependency: 'fetchUser'. Either include it or remove the dependency array  [2mreact-hooks/exhaustive-deps[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\Admin\SuperAdmin\EventRegisteredUsers.jsx[24m[0m
+[0m  [2m2:13[22m  [31merror[39m  'XLSX' is defined but never used  [2mno-unused-vars[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\UserDashboard\UserDashboard.jsx[24m[0m
+[0m  [2m189:17[22m  [31merror[39m  'title' is missing in props validation  [2mreact/prop-types[22m[0m
+[0m  [2m189:24[22m  [31merror[39m  'value' is missing in props validation  [2mreact/prop-types[22m[0m
+[0m  [2m189:31[22m  [31merror[39m  'color' is missing in props validation  [2mreact/prop-types[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\components\Card\Card.jsx[24m[0m
+[0m  [2m11:3[22m   [31merror[39m  '_id' is defined but never used                      [2mno-unused-vars[22m[0m
+[0m  [2m11:3[22m   [31merror[39m  '_id' is missing in props validation                 [2mreact/prop-types[22m[0m
+[0m  [2m12:3[22m   [31merror[39m  'image' is missing in props validation               [2mreact/prop-types[22m[0m
+[0m  [2m13:3[22m   [31merror[39m  'name' is missing in props validation                [2mreact/prop-types[22m[0m
+[0m  [2m14:3[22m   [31merror[39m  'description' is missing in props validation         [2mreact/prop-types[22m[0m
+[0m  [2m15:3[22m   [31merror[39m  'date' is missing in props validation                [2mreact/prop-types[22m[0m
+[0m  [2m16:3[22m   [31merror[39m  'time' is missing in props validation                [2mreact/prop-types[22m[0m
+[0m  [2m17:3[22m   [31merror[39m  'location' is missing in props validation            [2mreact/prop-types[22m[0m
+[0m  [2m18:3[22m   [31merror[39m  'totalRegistrations' is missing in props validation  [2mreact/prop-types[22m[0m
+[0m  [2m19:3[22m   [31merror[39m  'departments' is missing in props validation         [2mreact/prop-types[22m[0m
+[0m  [2m20:3[22m   [31merror[39m  'onClick' is missing in props validation             [2mreact/prop-types[22m[0m
+[0m  [2m47:41[22m  [31merror[39m  'departments.map' is missing in props validation     [2mreact/prop-types[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\components\EventDetails\EventDetails.jsx[24m[0m
+[0m  [2m277:21[22m  [31merror[39m  'icon' is missing in props validation   [2mreact/prop-types[22m[0m
+[0m  [2m277:27[22m  [31merror[39m  'label' is missing in props validation  [2mreact/prop-types[22m[0m
+[0m  [2m277:34[22m  [31merror[39m  'value' is missing in props validation  [2mreact/prop-types[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\components\Navbar\Navbar.jsx[24m[0m
+[0m  [2m25:3[22m  [31merror[39m  React Hook "useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  [2mreact-hooks/rules-of-hooks[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\pages\Login.jsx[24m[0m
+[0m  [2m145:20[22m  [31merror[39m  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  [2mreact/no-unescaped-entities[22m[0m
+[0m[0m
+[0m[4mD:\RKUEvents\frontend\src\pages\ProfilePage.jsx[24m[0m
+[0m   [2m65:9[22m   [31merror[39m  'getFirstThreeWords' is assigned a value but never used  [2mno-unused-vars[22m[0m
+[0m  [2m231:31[22m  [31merror[39m  'userId' is missing in props validation                  [2mreact/prop-types[22m[0m
+[0m  [2m265:14[22m  [31merror[39m  'err' is defined but never used                          [2mno-unused-vars[22m[0m
+[0m  [2m328:21[22m  [31merror[39m  'label' is missing in props validation                   [2mreact/prop-types[22m[0m
+[0m  [2m328:28[22m  [31merror[39m  'value' is missing in props validation                   [2mreact/prop-types[22m[0m
+[0m  [2m328:35[22m  [31merror[39m  'highlight' is missing in props validation               [2mreact/prop-types[22m[0m
+[0m[0m
+[0m[31m[1m✖ 44 problems (39 errors, 5 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
