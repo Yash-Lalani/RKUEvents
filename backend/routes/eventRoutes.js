@@ -68,7 +68,7 @@ router.get("/:id", async (req, res) => {
 // POST create new event
 router.post("/add", async (req, res) => {
   try {
-    const { name, description, date, time, location, image, departments } = req.body;
+    const { name, description, date, time, location, image, departments, isPaid, price } = req.body;
 
     if (!name || !description || !date || !time || !location || !departments || !departments.length) {
       return res.status(400).json({ msg: "Please fill all fields, including target departments" });
@@ -82,6 +82,8 @@ router.post("/add", async (req, res) => {
       location,
       image,
       departments, // ✅ multiple departments support
+      isPaid: isPaid || false,
+      price: price || 0,
     });
 
     await newEvent.save();

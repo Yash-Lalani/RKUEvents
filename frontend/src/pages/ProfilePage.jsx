@@ -79,7 +79,7 @@ const ProfilePage = () => {
         {/* Header Section */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 tracking-tight mb-4">
-            Command Center
+            Profile
           </h1>
           <p className="text-gray-400 text-lg">Manage your identity, security, and event participation.</p>
         </div>

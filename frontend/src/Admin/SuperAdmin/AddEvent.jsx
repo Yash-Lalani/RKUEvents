@@ -10,6 +10,8 @@ const AddEvent = () => {
     location: "",
     image: "",
     departments: [], // array for multiple departments
+    isPaid: false,
+    price: "",
   });
 
   const [message, setMessage] = useState("");
@@ -18,7 +20,11 @@ const AddEvent = () => {
   const availableDepts = ["ALL", "SOE", "SOS", "SOM", "PHARMACY"];
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleCheckboxChange = (dept) => {
@@ -63,7 +69,7 @@ const AddEvent = () => {
       if (res.ok) {
         setMessage("✅ Event created successfully!");
         setFormData({
-          name: "", description: "", date: "", time: "", location: "", image: "", departments: [],
+          name: "", description: "", date: "", time: "", location: "", image: "", departments: [], isPaid: false, price: ""
         });
       } else {
         setMessage("❌ " + (data.msg || "Failed to create event."));
@@ -125,6 +131,34 @@ const AddEvent = () => {
               <label className="block text-gray-400 text-sm font-medium mb-2">Banner Image URL</label>
               <input type="url" name="image" placeholder="https://..." value={formData.image} onChange={handleChange}
                 className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 transition outline-none" />
+            </div>
+
+            <div className="md:col-span-2 flex items-center space-x-4 p-4 bg-white/5 rounded-xl border border-white/10">
+              <label className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="isPaid"
+                  checked={formData.isPaid}
+                  onChange={handleChange}
+                  className="w-5 h-5 rounded border-white/20 bg-black/50 text-blue-500 focus:ring-blue-500 focus:ring-offset-gray-900"
+                />
+                <span className="text-white font-medium">Is this a paid event?</span>
+              </label>
+              
+              {formData.isPaid && (
+                <div className="flex-1 ml-4">
+                  <input 
+                    type="number" 
+                    name="price" 
+                    placeholder="Price (₹)" 
+                    value={formData.price} 
+                    onChange={handleChange} 
+                    required={formData.isPaid}
+                    min="1"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 transition outline-none" 
+                  />
+                </div>
+              )}
             </div>
 
             <div className="md:col-span-2">

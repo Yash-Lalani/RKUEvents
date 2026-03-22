@@ -49,20 +49,87 @@ const EventDetails = () => {
       const userId = user?.id || user?.user?.id;
       const eventId = event?._id;
 
-      const res = await fetch("http://localhost:5000/api/event-registrations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, eventId, responses: formData }),
-      });
+      if (!userId) {
+        alert("User ID not found, please log in again.");
+        return;
+      }
 
-      const data = await res.json();
+      if (event.isPaid && event.price > 0) {
+        // --- RAZORPAY PAYMENT FLOW ---
+        // 1. Create order
+        const orderRes = await fetch("http://localhost:5000/api/payments/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: event.price }),
+        });
+        
+        const orderData = await orderRes.json();
+        if (!orderRes.ok) {
+          alert("Failed to initialize payment.");
+          return;
+        }
 
-      if (res.ok) {
-        const userEmail = user?.email || user?.user?.email || "your registered email";
-        alert(`✅ Registration successful!\n\nA confirmation email has been sent to:\n${userEmail}\n\nPlease check your inbox (and spam folder).`);
-        setShowModal(false);
+        // 2. Open Razorpay Checkout Modal
+        const options = {
+          key: "rzp_test_SR323JD5KLvkO7", // Using the test key directly for frontend
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: "RKU Events",
+          description: `Registration for ${event.name}`,
+          order_id: orderData.id,
+          handler: async function (response) {
+            // 3. Verify Payment
+            const verifyRes = await fetch("http://localhost:5000/api/payments/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                userId,
+                eventId,
+                responses: formData,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+            if (verifyRes.ok) {
+              const userEmail = user?.email || user?.user?.email || "your registered email";
+              alert(`✅ Registration and Payment successful!\n\nA confirmation email has been sent to:\n${userEmail}\n\nPlease check your inbox (and spam folder).`);
+              setShowModal(false);
+            } else {
+              alert(verifyData.msg || "Payment verification failed.");
+            }
+          },
+          prefill: {
+            name: user?.name || user?.user?.name || "Test User",
+            email: user?.email || user?.user?.email || "test@example.com",
+            contact: "9999999999", // Added dummy Indian phone number to prevent International card errors
+          },
+          theme: {
+            color: "#3B82F6",
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
       } else {
-        alert(data.message || "Registration failed.");
+        // --- FREE EVENT FLOW ---
+        const res = await fetch("http://localhost:5000/api/event-registrations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, eventId, responses: formData }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          const userEmail = user?.email || user?.user?.email || "your registered email";
+          alert(`✅ Registration successful!\n\nA confirmation email has been sent to:\n${userEmail}\n\nPlease check your inbox (and spam folder).`);
+          setShowModal(false);
+        } else {
+          alert(data.message || "Registration failed.");
+        }
       }
     } catch (err) {
       console.error(err);
@@ -141,6 +208,11 @@ const EventDetails = () => {
               <CalendarDaysIcon className="w-6 h-6" />
               {event.date}
             </p>
+            {event.isPaid && event.price > 0 && (
+              <p className="mt-2 text-2xl font-bold text-green-400 drop-shadow-md">
+                ₹{event.price} <span className="text-sm font-medium text-gray-300">/ per ticket</span>
+              </p>
+            )}
           </div>
         </motion.div>
 

@@ -22,6 +22,7 @@ const authRoutes = require("./routes/auth");
 const eventRoutes = require("./routes/eventRoutes");
 app.use("/api/event-details", eventDetailsRoutes);
 app.use("/api/event-registrations", eventRegistrationRoutes);
+app.use("/api/payments", require("./routes/paymentRoutes"));
 app.use("/api/department-admin", departmentAdminRoutes);
 app.use("/api/super-admin/events", superAdminEventRoutes);
 app.use("/api/stats", require("./routes/dashboardStats"));

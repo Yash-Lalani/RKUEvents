@@ -12,6 +12,8 @@ const eventSchema = new mongoose.Schema({
   location: { type: String, required: true },
   totalRegistrations: { type: Number, default: 0 }, // dynamic later
   image: { type: String }, // URL or filename
+  isPaid: { type: Boolean, default: false }, // Indicates if event requires payment
+  price: { type: Number, default: 0 }, // Price for the event
 }, { timestamps: true });
 
 module.exports = mongoose.model("Event", eventSchema);
